@@ -1,4 +1,4 @@
-file = File.readlines('puzzle_1.csv')
+file = File.readlines('day_one.csv')
 
 def get_depth_list(rows)
   depth_list = []

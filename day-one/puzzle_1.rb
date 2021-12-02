@@ -1,6 +1,6 @@
 require 'csv'
 
-file = CSV.read('puzzle_1.csv')
+file = CSV.read('day_one.csv')
 
 def get_depth_list(filename)
   depth_list = []
