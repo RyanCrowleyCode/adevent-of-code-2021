@@ -30,11 +30,8 @@ def get_oxygen_generator_rating(binary_rows, index=0)
         zeroes_array.push(row) if row[index] == "0"
     end
     
-    if ones_array.size >= zeroes_array.size
-        return get_oxygen_generator_rating(ones_array, index + 1)
-    else
-        return get_oxygen_generator_rating(zeroes_array, index +1)
-    end
+    return get_oxygen_generator_rating(ones_array, index + 1) if ones_array.size >= zeroes_array.size
+    get_oxygen_generator_rating(zeroes_array, index +1)
 end
 
 def get_c02_scrubber_rating(binary_rows, index=0)
@@ -48,11 +45,8 @@ def get_c02_scrubber_rating(binary_rows, index=0)
         zeroes_array.push(row) if row[index] == "0"
     end
     
-    if zeroes_array.size <= ones_array.size
-        return get_c02_scrubber_rating(zeroes_array, index + 1)
-    else
-        return get_c02_scrubber_rating(ones_array, index +1)
-    end
+    return get_c02_scrubber_rating(zeroes_array, index + 1) if zeroes_array.size <= ones_array.size
+    get_c02_scrubber_rating(ones_array, index +1)
 end
 
 ################ Showing the Answer ##########################
