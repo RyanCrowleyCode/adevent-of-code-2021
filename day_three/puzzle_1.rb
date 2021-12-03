@@ -1,3 +1,4 @@
+################ Getting the data ##########################
 file = File.read("day_three.csv")
 
 def get_binary_data(rows)
@@ -5,12 +6,12 @@ def get_binary_data(rows)
     binary_data = split_rows.map do | row |
         row.split("")
     end
-    
     binary_data
 end
 
 binary_rows = get_binary_data(file)
 
+################ Solving the problem ##########################
 def get_power_consumption(binary_rows)
     gamma_binary_string = ""
     epsilon_binary_string = ""
@@ -38,4 +39,5 @@ def get_power_consumption(binary_rows)
     gamma_binary_string.to_i(2) * epsilon_binary_string.to_i(2)
 end
 
+################ Showing the Answer ##########################
 puts get_power_consumption(binary_rows)
