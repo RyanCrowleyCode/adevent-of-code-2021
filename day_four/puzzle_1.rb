@@ -13,7 +13,6 @@ end
 
 def prepare_boards(board_array)
     @board_hash = Hash.new
-    @board_tracker_hash = Hash.new
     board_number = 1
 
     board = Array.new
