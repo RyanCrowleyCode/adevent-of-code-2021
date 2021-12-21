@@ -16,76 +16,101 @@ def set_height_array(file)
 end
 
 set_height_array(file)
+@num_rows = @height_array.length
+
+@basin_hash = Hash.new
 
 ################ Solving the problem ########################## 
 
-# determine if has_left, has_right, has_up, has_down
-# for each that it has, if it is less than all of those, it is a low point
-# add this number to a low_points array
-
-def sum_risk_levels
-    low_points_array = []
-    count = 0
-
+def find_basins
+    basin_tally = 1
+    
     @height_array.each_with_index do |row, row_index|
+        @row_length ||= row.length
+        
         row.each_with_index do |height, height_index|
-            is_low = true
+            coordinate_array = []
+            coordinate_array = look_right(row, height_index, row_index)
+            coordinate_array += look_down(height_index, row_index)
 
-            if has_left(height_index)
-                if row[height_index - 1] <= height
-                    is_low = false
-                end
+            basin_number_list = find_basin_number(coordinate_array)
+            if (basin_number_list.length == 0) && (coordinate_array.length > 0)
+                basin_number_list.push(basin_tally)
+                basin_tally += 1
             end
-            if has_right(height_index, row.length)
-                if row[height_index + 1] <= height
-                    is_low = false
-                end
-            end
-            if has_up(row_index)
-                if @height_array[row_index - 1][height_index] <= height
-                    is_low = false
-                end
-            end
-            if has_down(row_index)
-                if @height_array[row_index + 1][height_index] <= height
-                    is_low = false
+
+            # factoring for more complicated basin patterns, re-assigning basin numbers.
+            if (basin_number_list.length > 1)
+                @basin_hash.each do |key, value|
+                    if basin_number_list.include?(value)
+                        @basin_hash[key] = basin_number_list.first
+                    end
                 end
             end
 
-            if is_low
-                low_points_array.push(height)
+            coordinate_array.each do |coordinate|
+                @basin_hash[coordinate] = basin_number_list.first
             end
         end
     end
+end
 
-    low_points_array.each do |low_point|
-        count += low_point
+def look_right(row, height_index, row_index)
+    coordinate_array = []
+    range = (height_index..(@row_length -1))
+
+    range.each do |horizontal_position|
+        if row[horizontal_position] == 9
+            break
+        end
+        coordinate_array.push("#{horizontal_position}, #{row_index}")
     end
-
-    count + low_points_array.length
+    coordinate_array
 end
 
-# risk level = 1 + height of the point
-# so, 1 0 5 5 would be 2 1 6 6 
-# we want to sum the risk levels of all of the low points.
-# so, sum all the numbers in the low points array + length of the array
+def look_down(height_index, row_index)
+    coordinate_array = []
+    range = (row_index..(@num_rows -1))
 
-def has_left(index)
-    return index > 0
+    range.each do |verticle_position|
+        if @height_array[verticle_position][height_index] == 9
+            break
+        end
+        coordinate_array.push("#{height_index}, #{verticle_position}")
+    end
+    coordinate_array
 end
 
-def has_right(index, row_length)
-    return index < (row_length - 1)
+def find_basin_number(coordinate_array)
+    possible_basin_numbers = []
+    coordinate_array.each do |coordinate|
+        if @basin_hash.has_key?(coordinate)
+            possible_basin_numbers.push(@basin_hash[coordinate])
+        end
+    end
+    
+    possible_basin_numbers
 end
 
-def has_up(row_index)
-    return row_index > 0
+def find_basin_sizes
+    @basin_sizes = Hash.new
+    @basin_hash.each do |key, value|
+        if @basin_sizes.has_key?(value.to_s)
+            @basin_sizes[value.to_s] += 1
+        else
+            @basin_sizes[value.to_s] = 1
+        end
+    end
 end
 
-def has_down(row_index)
-    return row_index < (@height_array.length - 1)
+def multiply_3_largest_basins
+    find_basins
+    find_basin_sizes
+    sorted_basin_sizes = @basin_sizes.values.sort.reverse
+    return (sorted_basin_sizes[0]) * (sorted_basin_sizes[1]) * (sorted_basin_sizes[2])
 end
+
 
 ################ Showing the Answer ##########################
 
-puts sum_risk_levels
+puts multiply_3_largest_basins
